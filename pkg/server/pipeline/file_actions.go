@@ -3,7 +3,7 @@ package pipeline
 import (
 	"bitbucket.org/itskovich/core/pkg/core"
 	"bitbucket.org/itskovich/core/pkg/core/validation"
-	"git.molbulak.ru/a.itskovich/molbulak-services-golang/pkg/server/filestorage"
+	"bitbucket.org/itskovich/server/pkg/server/filestorage"
 	"time"
 )
 

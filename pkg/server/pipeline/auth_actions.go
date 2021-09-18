@@ -4,7 +4,7 @@ import (
 	"bitbucket.org/itskovich/core/pkg/core"
 	"bitbucket.org/itskovich/core/pkg/core/frmclient"
 	"bitbucket.org/itskovich/goava/pkg/goava/errs"
-	"git.molbulak.ru/a.itskovich/molbulak-services-golang/pkg/server/users"
+	"bitbucket.org/itskovich/server/pkg/server/users"
 	"strings"
 )
 
