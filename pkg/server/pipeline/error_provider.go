@@ -8,7 +8,6 @@ import (
 	"bitbucket.org/itskovich/goava/pkg/goava/utils"
 	"bitbucket.org/itskovich/server/pkg/server/filestorage"
 	"errors"
-	"strings"
 )
 
 type ErrorProviderServiceImpl struct {
@@ -35,7 +34,7 @@ func (c *ErrorProviderServiceImpl) ProvideError(err error) *Err {
 		Message: c.getErrMsg(err),
 		Details: c.getErrDetails(err),
 	}
-	if strings.EqualFold(r.Reason, errs.ReasonOther) && c.Config.IsProfileProd() {
+	if len(r.Message) == 0 {
 		r.Message = frmclient.InternalErrorMessage
 	}
 	return r
@@ -77,14 +76,7 @@ func (c *ErrorProviderServiceImpl) getErrMsg(e error) string {
 
 	be := errs.FindBaseError(e)
 	if be != nil {
-		r := be.Message
-		if !c.Config.IsProfileProd() && len(be.Details) > 0 {
-			r += ", Details: " + be.Details
-		}
-		if len(r) == 0 {
-			r = frmclient.InternalErrorMessage
-		}
-		return r
+		return be.Message
 	}
 
 	if c.Config.IsProfileProd() {

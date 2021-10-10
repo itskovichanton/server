@@ -139,11 +139,9 @@ func (c *ActionRunnerImpl) Run(action IAction, argsProvider func() (interface{},
 		}
 		result.Err = errorProviderService.ProvideError(err)
 		action.OnError(arg, result.Err)
-		go func() {
-			c.ErrorHandler.HandleWithCustomParams(result.Err.Error, func(alertParams *core.AlertParams) {
-				action.PrepareErrorAlert(alertParams, result.Err, arg)
-			})
-		}()
+		c.ErrorHandler.HandleWithCustomParams(result.Err.Error, func(alertParams *core.AlertParams) {
+			action.PrepareErrorAlert(alertParams, result.Err, arg)
+		})
 	}
 
 	return result
