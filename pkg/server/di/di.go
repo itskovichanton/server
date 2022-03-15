@@ -24,12 +24,14 @@ func (c *DI) buildContainer(container *dig.Container) *dig.Container {
 
 	container.Provide(c.NewSecurityService)
 	container.Provide(c.NewHttpController)
+	container.Provide(c.NewGrpcController)
 	container.Provide(c.NewCheckSecurityAction)
 	container.Provide(c.NewJsonPresenter)
 	container.Provide(c.NewErrorProviderService)
 	container.Provide(c.NewActionRunner)
 	container.Provide(c.NewDefaultErrorProviderService)
 	container.Provide(c.NewEntityFromHTTPReaderService)
+	container.Provide(c.NewEntityFromGRPCReaderService)
 	container.Provide(c.NewSessionStorageService)
 	container.Provide(c.NewUserRepo)
 	container.Provide(c.NewAuthService)
@@ -102,6 +104,12 @@ func (c *DI) NewCheckSecurityAction(securityService pipeline.ISecurityService) *
 
 func (c *DI) NewEntityFromHTTPReaderService(config *core.Config) pipeline.IEntityFromHTTPReaderService {
 	return &pipeline.EntityFromHTTPReaderServiceImpl{
+		Config: config,
+	}
+}
+
+func (c *DI) NewEntityFromGRPCReaderService(config *core.Config) pipeline.IEntityFromGRPCReaderService {
+	return &pipeline.EntityFromGRPCReaderServiceImpl{
 		Config: config,
 	}
 }
@@ -189,5 +197,17 @@ func (c *DI) NewHttpController(responsePresenter pipeline.IResponsePresenter, ch
 		DefaultResponsePresenter:    responsePresenter,
 		FileResponsePresenter:       filePresenter,
 		EchoEngine:                  echo.New(),
+	}
+}
+
+func (c *DI) NewGrpcController(checkSecurityAction *pipeline.CheckSecurityAction, registerAccountAction *pipeline.RegisterAccountAction, validateCallerAction *pipeline.ValidateCallerAction, getUserAction *pipeline.GetUserAction, config *core.Config, actionRunner pipeline.IActionRunner, entityFromGRPCReaderService pipeline.IEntityFromGRPCReaderService) *pipeline.GrpcControllerImpl {
+	return &pipeline.GrpcControllerImpl{
+		CheckSecurityAction:         checkSecurityAction,
+		GetUserAction:               getUserAction,
+		ValidateCallerAction:        validateCallerAction,
+		RegisterAccountAction:       registerAccountAction,
+		Config:                      config,
+		ActionRunner:                actionRunner,
+		EntityFromGRPCReaderService: entityFromGRPCReaderService,
 	}
 }
