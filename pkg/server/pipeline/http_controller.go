@@ -2,8 +2,6 @@ package pipeline
 
 import (
 	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/core/pkg/core/frmclient"
-	"bitbucket.org/itskovich/goava/pkg/goava/errs"
 	"bitbucket.org/itskovich/goava/pkg/goava/httputils"
 	"fmt"
 	"github.com/labstack/echo/v4"
@@ -113,20 +111,6 @@ func (c *HttpControllerImpl) GetHandlerByFuncPresenterErrorProvider(action func(
 		}
 		return presenter.Write(context, result, 0)
 	}
-}
-
-type ImmediateFailedAction struct {
-	BaseActionImpl
-
-	counter int
-}
-
-func (c *ImmediateFailedAction) Run(arg interface{}) (interface{}, error) {
-	return "FAIL", errs.NewBaseErrorWithReason(fmt.Sprintf("Test error message: %v", c.counter), frmclient.ReasonAccessDenied)
-}
-
-func (c *ImmediateFailedAction) GetName() string {
-	return "ImmediateFailedAction"
 }
 
 func (c *HttpControllerImpl) init() {

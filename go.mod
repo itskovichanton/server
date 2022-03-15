@@ -3,8 +3,8 @@ module bitbucket.org/itskovich/server
 go 1.17
 
 require (
-	bitbucket.org/itskovich/core v0.0.0-20211010130214-46f1e057a0b5
-	bitbucket.org/itskovich/goava v0.0.0-20211004084337-a6bbaa00bab2
+	bitbucket.org/itskovich/core v0.0.0-20211021115641-4447850ce1cb
+	bitbucket.org/itskovich/goava v0.0.0-20211021114853-a1b1270d3db0
 	github.com/asaskevich/EventBus v0.0.0-20200907212545-49d423059eef
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/pkg/errors v0.9.1
@@ -21,6 +21,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/kardianos/service v1.2.0 // indirect
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f // indirect
 	github.com/lestrrat/go-strftime v0.0.0-20180220042222-ba3bf9c1d042 // indirect
