@@ -58,6 +58,7 @@ func (c *BaseActionImpl) PrepareErrorAlert(alertParams *core.AlertParams, err *E
 
 type IActionRunner interface {
 	Run(action IAction, argsProvider func() (interface{}, error), service IErrorProviderService) *Result
+	RunByProvider(action func(args interface{}) IAction, argsProvider func() (interface{}, error), service IErrorProviderService) *Result
 }
 
 type ActionRunnerImpl struct {
@@ -92,6 +93,23 @@ type ActionContextImpl struct {
 }
 
 func (c *ActionRunnerImpl) Run(action IAction, argsProvider func() (interface{}, error), errorProviderService IErrorProviderService) *Result {
+	return c.RunByProvider(func(args interface{}) IAction {
+		return action
+	}, argsProvider, errorProviderService)
+}
+
+func (c *ActionRunnerImpl) RunByProvider(actionProvider func(args interface{}) IAction, argsProvider func() (interface{}, error), errorProviderService IErrorProviderService) *Result {
+
+	result := &Result{}
+	result.ExecutionTimeMs = utils.CurrentTimeMillis()
+
+	var action IAction
+	arg, err := argsProvider()
+	if err != nil {
+		action = &FailedActionImpl{Error: err}
+	} else {
+		action = actionProvider(arg)
+	}
 
 	ctx := ActionContextImpl{
 		ActionContext: ActionContext{
@@ -100,11 +118,6 @@ func (c *ActionRunnerImpl) Run(action IAction, argsProvider func() (interface{},
 		},
 		Logger: c.LoggerService.GetDefaultActionsLogger(),
 	}
-
-	result := &Result{}
-	result.ExecutionTimeMs = utils.CurrentTimeMillis()
-
-	arg, err := argsProvider()
 
 	defer func() {
 		result.ExecutionTimeMs = utils.CurrentTimeMillis() - result.ExecutionTimeMs
@@ -215,4 +228,32 @@ func (c *ChainedActionImpl) Run(arg interface{}) (interface{}, error) {
 	}
 
 	return lastResult, nil
+}
+
+type FuncActionImpl struct {
+	BaseActionImpl
+
+	Func func(arg interface{}) (interface{}, error)
+}
+
+func (c *FuncActionImpl) Run(arg interface{}) (interface{}, error) {
+	return c.Func(arg)
+}
+
+type NopActionImpl struct {
+	BaseActionImpl
+}
+
+func (c *NopActionImpl) Run(arg interface{}) (interface{}, error) {
+	return arg, nil
+}
+
+type FailedActionImpl struct {
+	BaseActionImpl
+
+	Error error
+}
+
+func (c *FailedActionImpl) Run(arg interface{}) (interface{}, error) {
+	return nil, c.Error
 }

@@ -46,8 +46,8 @@ func (c *EntityFromGRPCReaderServiceImpl) readCallerType(r metadata.MD) string {
 
 func (c *EntityFromGRPCReaderServiceImpl) readAuthArgs(r metadata.MD) *core.AuthArgs {
 
-	sessionToken := utils.GetFirstElementStr(r.Get("sessionToken"))
-	username, password, authOK := httputils.ParseBasicAuth(utils.GetFirstElementStr(r.Get("Authorization")))
+	sessionToken := utils.GetFirstElementStr(r.Get("sessiontoken"))
+	username, password, authOK := httputils.ParseBasicAuth(utils.GetFirstElementStr(r.Get("authorization")))
 
 	if !authOK && len(sessionToken) == 0 {
 		return nil
@@ -80,14 +80,14 @@ func (c *EntityFromGRPCReaderServiceImpl) readLanguage(r metadata.MD) string {
 }
 
 func (c *EntityFromGRPCReaderServiceImpl) readVersion(r metadata.MD) *core.Version {
-	vc := r.Get("Caller-Version-Code")
+	vc := r.Get("caller-version-code")
 	if len(vc) == 0 || len(vc[0]) == 0 {
 		return nil
 	}
 
 	code, _ := strconv.Atoi(vc[0])
 	name := ""
-	nameFromCtx := r.Get("Caller-Version-Name")
+	nameFromCtx := r.Get("caller-version-name")
 	if len(nameFromCtx) != 0 {
 		name = nameFromCtx[0]
 	}

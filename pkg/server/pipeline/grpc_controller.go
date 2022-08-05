@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"bitbucket.org/itskovich/core/pkg/core"
+	"context"
 	"fmt"
 	"google.golang.org/grpc"
 	"net"
@@ -54,20 +55,32 @@ func (c *GrpcControllerImpl) Start() error {
 	return nil
 }
 
-//func (c *GrpcControllerImpl) GetHandlerByFuncPresenterErrorProvider(action func() IAction, errorProviderService IErrorProviderService) func(context echo.Context) error {
-//	return func(context echo.Context) error {
-//
-//		result := c.ActionRunner.Run(
-//			action(),
-//			func() (interface{}, error) {
-//				return c.EntityFromGRPCReaderService.ReadCallParams(context)
-//			},
-//			errorProviderService,
-//		)
-//
-//		if presenter == nil {
-//			presenter = c.DefaultResponsePresenter
-//		}
-//		return presenter.Write(context, result, 0)
-//	}
-//}
+func (c *GrpcControllerImpl) RunByErrorProvider(ctx context.Context, action IAction, errorProviderService IErrorProviderService) *Result {
+	return c.ActionRunner.Run(
+		action,
+		func() (interface{}, error) {
+			return c.EntityFromGRPCReaderService.ReadCallParams(ctx)
+		},
+		errorProviderService,
+	)
+}
+
+func (c *GrpcControllerImpl) Run(ctx context.Context, action IAction) *Result {
+	return c.RunByErrorProvider(ctx, action, nil)
+}
+
+func (c *GrpcControllerImpl) RunByActionAndErrorProvider(ctx context.Context, action func(args *core.CallParams) IAction, errorProviderService IErrorProviderService) *Result {
+	return c.ActionRunner.RunByProvider(
+		func(args interface{}) IAction {
+			return action(args.(*core.CallParams))
+		},
+		func() (interface{}, error) {
+			return c.EntityFromGRPCReaderService.ReadCallParams(ctx)
+		},
+		errorProviderService,
+	)
+}
+
+func (c *GrpcControllerImpl) RunByActionProvider(ctx context.Context, action func(args *core.CallParams) IAction) *Result {
+	return c.RunByActionAndErrorProvider(ctx, action, nil)
+}
