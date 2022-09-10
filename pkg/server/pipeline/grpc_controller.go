@@ -37,7 +37,7 @@ func (c *GrpcControllerImpl) Start() error {
 		return nil
 	}
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", c.Config.Server.GrpcPort))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%v", c.Config.Server.GrpcPort))
 	if err != nil {
 		return err
 	}

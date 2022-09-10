@@ -38,6 +38,7 @@ func (c *DI) buildContainer(container *dig.Container) *dig.Container {
 	container.Provide(c.NewGetUserAction)
 	container.Provide(c.NewValidateActiveUserAction)
 	container.Provide(c.NewValidateCallerAction)
+	container.Provide(c.NewGetSessionAction)
 	container.Provide(c.NewServerSettingsProviderService)
 	container.Provide(c.NewGetFileAction)
 	container.Provide(c.NewFileStorageService)
@@ -184,8 +185,14 @@ func (c *DI) NewGetFileAction(fileStorageService filestorage.IFileStorageService
 	}
 }
 
-func (c *DI) NewHttpController(responsePresenter pipeline.IResponsePresenter, checkSecurityAction *pipeline.CheckSecurityAction, filePresenter *pipeline.FileResponsePresenterImpl, getFileAction *pipeline.GetFileAction, registerAccountAction *pipeline.RegisterAccountAction, validateCallerAction *pipeline.ValidateCallerAction, getUserAction *pipeline.GetUserAction, config *core.Config, actionRunner pipeline.IActionRunner, entityFromHTTPReaderService pipeline.IEntityFromHTTPReaderService) *pipeline.HttpControllerImpl {
+func (c *DI) NewGetSessionAction() *pipeline.GetSessionAction {
+	return &pipeline.GetSessionAction{}
+}
+
+func (c *DI) NewHttpController(getSessionAction *pipeline.GetSessionAction, responsePresenter pipeline.IResponsePresenter, checkSecurityAction *pipeline.CheckSecurityAction, filePresenter *pipeline.FileResponsePresenterImpl, getFileAction *pipeline.GetFileAction, registerAccountAction *pipeline.RegisterAccountAction, validateCallerAction *pipeline.ValidateCallerAction, getUserAction *pipeline.GetUserAction, config *core.Config, actionRunner pipeline.IActionRunner, entityFromHTTPReaderService pipeline.IEntityFromHTTPReaderService) *pipeline.HttpControllerImpl {
 	return &pipeline.HttpControllerImpl{
+		NopAction:                   &pipeline.NopActionImpl{},
+		GetSessionAction:            getSessionAction,
 		CheckSecurityAction:         checkSecurityAction,
 		GetUserAction:               getUserAction,
 		ValidateCallerAction:        validateCallerAction,

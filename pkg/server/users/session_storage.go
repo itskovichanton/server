@@ -52,6 +52,9 @@ func (c *SessionStorageServiceImpl) GetSessionByUsername(username string) *core.
 }
 
 func (c *SessionStorageServiceImpl) GetSessionByToken(token string) *core.Session {
+	if len(token) == 0 {
+		return nil
+	}
 	r, ok := c.tokenToSession[token]
 	if !ok {
 		return nil

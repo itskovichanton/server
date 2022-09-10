@@ -96,3 +96,15 @@ func (c *ValidateActiveUserAction) PrepareErrorAlert(alertParams *core.AlertPara
 	}
 
 }
+
+type GetSessionAction struct {
+	BaseActionImpl
+}
+
+func (c *GetSessionAction) Run(arg interface{}) (interface{}, error) {
+	p := arg.(*core.CallParams)
+	if p.Caller != nil && p.Caller.Session != nil {
+		return p.Caller.Session, nil
+	}
+	return nil, nil
+}

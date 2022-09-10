@@ -19,9 +19,11 @@ type HttpControllerImpl struct {
 
 	CheckSecurityAction   *CheckSecurityAction
 	GetUserAction         *GetUserAction
+	NopAction             *NopActionImpl
 	ValidateCallerAction  *ValidateCallerAction
 	RegisterAccountAction *RegisterAccountAction
 	GetFileAction         *GetFileAction
+	GetSessionAction      *GetSessionAction
 
 	Config                      *core.Config
 	ActionRunner                IActionRunner

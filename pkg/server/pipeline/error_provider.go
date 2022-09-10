@@ -69,6 +69,8 @@ func (c *ErrorProviderServiceImpl) getErrReason(err error) string {
 		r := ese.Reason
 		if len(r) == 0 {
 			return frmclient.ReasonServerRespondedWithError
+		} else {
+			return ese.Reason
 		}
 	}
 
