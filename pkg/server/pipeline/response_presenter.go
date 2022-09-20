@@ -1,10 +1,10 @@
 package pipeline
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core/frmclient"
-	"bitbucket.org/itskovich/core/pkg/core/validation"
-	"bitbucket.org/itskovich/goava/pkg/goava/utils"
-	"bitbucket.org/itskovich/server/pkg/server/filestorage"
+	"github.com/itskovichanton/core/pkg/core/frmclient"
+	"github.com/itskovichanton/core/pkg/core/validation"
+	"github.com/itskovichanton/goava/pkg/goava/utils"
+	"github.com/itskovichanton/server/pkg/server/filestorage"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )

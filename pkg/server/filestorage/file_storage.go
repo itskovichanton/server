@@ -1,9 +1,9 @@
 package filestorage
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/goava/pkg/goava/errs"
-	"bitbucket.org/itskovich/goava/pkg/goava/utils"
+	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/goava/pkg/goava/errs"
+	"github.com/itskovichanton/goava/pkg/goava/utils"
 	"io/ioutil"
 	"os"
 	"path/filepath"

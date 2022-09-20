@@ -1,10 +1,10 @@
 package pipeline
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/core/pkg/core/frmclient"
-	"bitbucket.org/itskovich/goava/pkg/goava/errs"
-	"bitbucket.org/itskovich/server/pkg/server/users"
+	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/core/pkg/core/frmclient"
+	"github.com/itskovichanton/goava/pkg/goava/errs"
+	"github.com/itskovichanton/server/pkg/server/users"
 	"strings"
 )
 

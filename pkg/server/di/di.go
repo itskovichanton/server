@@ -1,12 +1,12 @@
 package di
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/core/pkg/core/di"
-	"bitbucket.org/itskovich/core/pkg/core/logger"
-	"bitbucket.org/itskovich/server/pkg/server/filestorage"
-	"bitbucket.org/itskovich/server/pkg/server/pipeline"
-	"bitbucket.org/itskovich/server/pkg/server/users"
+	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/core/pkg/core/di"
+	"github.com/itskovichanton/core/pkg/core/logger"
+	"github.com/itskovichanton/server/pkg/server/filestorage"
+	"github.com/itskovichanton/server/pkg/server/pipeline"
+	"github.com/itskovichanton/server/pkg/server/users"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/dig"
 )

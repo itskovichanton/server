@@ -1,13 +1,13 @@
 package pipeline
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/core/pkg/core/frmclient"
-	"bitbucket.org/itskovich/core/pkg/core/validation"
-	"bitbucket.org/itskovich/goava/pkg/goava/errs"
-	"bitbucket.org/itskovich/goava/pkg/goava/utils"
-	"bitbucket.org/itskovich/server/pkg/server/filestorage"
 	"errors"
+	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/core/pkg/core/frmclient"
+	"github.com/itskovichanton/core/pkg/core/validation"
+	"github.com/itskovichanton/goava/pkg/goava/errs"
+	"github.com/itskovichanton/goava/pkg/goava/utils"
+	"github.com/itskovichanton/server/pkg/server/filestorage"
 )
 
 type ErrorProviderServiceImpl struct {

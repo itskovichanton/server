@@ -1,9 +1,9 @@
 package users
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/goava/pkg/goava/utils"
 	"fmt"
+	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/goava/pkg/goava/utils"
 	"math/rand"
 )
 

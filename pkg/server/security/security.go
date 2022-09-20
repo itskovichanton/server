@@ -1,8 +1,8 @@
 package security
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
 	"github.com/asaskevich/EventBus"
+	"github.com/itskovichanton/core/pkg/core"
 )
 
 const TopicSecurityViolation = "TOPIC_SECURITY_VIOLATION"

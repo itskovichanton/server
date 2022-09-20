@@ -1,8 +1,8 @@
 package pipeline
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/goava/pkg/goava/utils"
+	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/goava/pkg/goava/utils"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )

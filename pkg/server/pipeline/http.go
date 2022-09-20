@@ -1,10 +1,10 @@
 package pipeline
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/core/pkg/core/validation"
-	"bitbucket.org/itskovich/goava/pkg/goava/httputils"
-	"bitbucket.org/itskovich/goava/pkg/goava/utils"
+	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/core/pkg/core/validation"
+	"github.com/itskovichanton/goava/pkg/goava/httputils"
+	"github.com/itskovichanton/goava/pkg/goava/utils"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"

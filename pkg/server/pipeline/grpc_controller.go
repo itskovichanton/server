@@ -1,9 +1,9 @@
 package pipeline
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
 	"context"
 	"fmt"
+	"github.com/itskovichanton/core/pkg/core"
 	"google.golang.org/grpc"
 	"net"
 )

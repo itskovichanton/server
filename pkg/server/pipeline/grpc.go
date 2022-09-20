@@ -1,10 +1,10 @@
 package pipeline
 
 import (
-	"bitbucket.org/itskovich/core/pkg/core"
-	"bitbucket.org/itskovich/goava/pkg/goava/httputils"
-	"bitbucket.org/itskovich/goava/pkg/goava/utils"
 	"context"
+	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/goava/pkg/goava/httputils"
+	"github.com/itskovichanton/goava/pkg/goava/utils"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 	"strconv"
