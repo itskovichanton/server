@@ -1,6 +1,6 @@
 module bitbucket.org/itskovich/server
 
-go 1.17
+go 1.19
 
 require (
 	bitbucket.org/itskovich/core v0.0.0-20211021115641-4447850ce1cb
@@ -12,6 +12,7 @@ require (
 	github.com/spf13/cast v1.4.1
 	go.uber.org/dig v1.13.0
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac
+	google.golang.org/grpc v1.40.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -19,6 +20,7 @@ require (
 	github.com/c2h5oh/datasize v0.0.0-20200825124411-48ed595a09d2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/kardianos/service v1.2.0 // indirect
@@ -43,5 +45,7 @@ require (
 	golang.org/x/net v0.0.0-20210913180222-943fd674d43e // indirect
 	golang.org/x/sys v0.0.0-20210910150752-751e447fb3d0 // indirect
 	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/genproto v0.0.0-20210828152312-66f60bf46e71 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/ini.v1 v1.63.2 // indirect
 )
