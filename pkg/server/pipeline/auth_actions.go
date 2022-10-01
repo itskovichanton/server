@@ -4,6 +4,7 @@ import (
 	"github.com/itskovichanton/core/pkg/core"
 	"github.com/itskovichanton/core/pkg/core/frmclient"
 	"github.com/itskovichanton/goava/pkg/goava/errs"
+	"github.com/itskovichanton/server/pkg/server/entities"
 	"github.com/itskovichanton/server/pkg/server/users"
 	"strings"
 )
@@ -25,10 +26,10 @@ func (c *GetUserAction) PrepareErrorAlert(alertParams *core.AlertParams, e *Err,
 
 func (c *GetUserAction) Run(arg interface{}) (interface{}, error) {
 
-	p := arg.(*core.CallParams)
+	p := arg.(*entities.CallParams)
 
 	if p.Caller.AuthArgs == nil && p.Caller.Session != nil && len(p.Caller.Session.Token) > 0 {
-		p.Caller.AuthArgs = &core.AuthArgs{
+		p.Caller.AuthArgs = &entities.AuthArgs{
 			SessionToken: p.Caller.Session.Token,
 		}
 	}
@@ -65,7 +66,7 @@ func (c *RegisterAccountAction) GetName() string {
 }
 
 func (c *RegisterAccountAction) Run(arg interface{}) (interface{}, error) {
-	p := arg.(*core.CallParams)
+	p := arg.(*entities.CallParams)
 	return c.AuthService.Register(ReadAccount(p))
 }
 
@@ -78,7 +79,7 @@ func (c *ValidateActiveUserAction) GetName() string {
 }
 
 func (c *ValidateActiveUserAction) Run(arg interface{}) (interface{}, error) {
-	p := arg.(*core.CallParams)
+	p := arg.(*entities.CallParams)
 	if p.Caller.Session == nil || p.Caller.Session.Account == nil {
 		return nil, errs.NewBaseErrorWithReason("Пользователь не авторизован", frmclient.ReasonAuthorizationRequired)
 	}
@@ -102,7 +103,7 @@ type GetSessionAction struct {
 }
 
 func (c *GetSessionAction) Run(arg interface{}) (interface{}, error) {
-	p := arg.(*core.CallParams)
+	p := arg.(*entities.CallParams)
 	if p.Caller != nil && p.Caller.Session != nil {
 		return p.Caller.Session, nil
 	}

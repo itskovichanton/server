@@ -3,9 +3,9 @@ package pipeline
 import (
 	"github.com/itskovichanton/core/pkg/core/frmclient"
 	"github.com/itskovichanton/core/pkg/core/validation"
+	"github.com/itskovichanton/echo-http"
 	"github.com/itskovichanton/goava/pkg/goava/utils"
 	"github.com/itskovichanton/server/pkg/server/filestorage"
-	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
@@ -124,7 +124,7 @@ func (c *ResponsePresenterImpl) GetHttpResponseCode(result *Result, httpStatus i
 	switch result.Err.Reason {
 	case frmclient.ReasonTooManyRequests:
 		return http.StatusTooManyRequests
-	case frmclient.ReasonAccessDenied, ReasonProfileDenied, ReasonProfileDeniedByIP, frmclient.ReasonCallerUpdateRequired, frmclient.ReasonInactiveUser:
+	case frmclient.ReasonAccessDenied, frmclient.ReasonCallerUpdateRequired, frmclient.ReasonInactiveUser:
 		return http.StatusForbidden
 	case frmclient.ReasonAuthorizationRequired:
 		return http.StatusUnauthorized

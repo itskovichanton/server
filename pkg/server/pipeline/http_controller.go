@@ -2,10 +2,9 @@ package pipeline
 
 import (
 	"fmt"
-	"github.com/itskovichanton/core/pkg/core"
-	"github.com/itskovichanton/goava/pkg/goava/httputils"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/itskovichanton/echo-http"
+	"github.com/itskovichanton/echo-http/middleware"
+	"github.com/itskovichanton/server/pkg/server"
 	"strings"
 )
 
@@ -17,7 +16,6 @@ type IHttpController interface {
 type HttpControllerImpl struct {
 	IHttpController
 
-	CheckSecurityAction   *CheckSecurityAction
 	GetUserAction         *GetUserAction
 	NopAction             *NopActionImpl
 	ValidateCallerAction  *ValidateCallerAction
@@ -25,7 +23,7 @@ type HttpControllerImpl struct {
 	GetFileAction         *GetFileAction
 	GetSessionAction      *GetSessionAction
 
-	Config                      *core.Config
+	Config                      *server.Config
 	ActionRunner                IActionRunner
 	EntityFromHTTPReaderService IEntityFromHTTPReaderService
 	DefaultResponsePresenter    IResponsePresenter
@@ -119,21 +117,14 @@ func (c *HttpControllerImpl) init() {
 	c.AddRouterModifier(func(e *HttpControllerImpl) {
 		//c.GETPOST("/error", c.GetDefaultHandler(&ChainedActionImpl{Actions: []IAction{c.ValidateCallerAction, &ImmediateFailedAction{}}}))
 		//r.GET("/setServerStateAction", c.GetDefaultHandler(c.SetServerStateAction))
-		c.GETPOST("/api/admin/registerAccount", c.GetDefaultHandler(&ChainedActionImpl{
+		c.EchoEngine.GET("/api/admin/registerAccount", c.GetDefaultHandler(&ChainedActionImpl{
 			Actions: []IAction{c.ValidateCallerAction, c.GetUserAction /*c.CheckSecurityAction.WithActionName("AccountRegistration"),*/, c.RegisterAccountAction},
 		}))
-		c.GETPOST("/api/admin/getAccount", c.GetDefaultHandler(&ChainedActionImpl{
+		c.EchoEngine.GET("/api/admin/getAccount", c.GetDefaultHandler(&ChainedActionImpl{
 			Actions: []IAction{c.ValidateCallerAction, c.GetUserAction},
 		}))
 		//r.GET("/api/getFile", c.GetHandlerByActionPresenter(&ChainedActionImpl{
 		//	Actions: []IAction{c.CheckServerStateAction /*c.ValidateCallerAction,*/, c.GetUserAction /*checkWithSecurityAction(SecurityService.Params.Builder().admin().build()),*/, c.GetFileAction},
 		//}, c.FileResponsePresenter))
 	})
-}
-
-func (c *HttpControllerImpl) GETPOST(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) {
-	//if c.Config.Server.EnableThrottleMode {
-	//	m = append(m, c.getThrottleMiddlewareFunc())
-	//}
-	httputils.GETPOST(c.EchoEngine, path, h, m...)
 }

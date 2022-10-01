@@ -1,8 +1,9 @@
 package pipeline
 
 import (
-	"github.com/itskovichanton/core/pkg/core"
 	"github.com/itskovichanton/core/pkg/core/validation"
+	"github.com/itskovichanton/echo-http"
+	"github.com/itskovichanton/server/pkg/server/entities"
 	"github.com/itskovichanton/server/pkg/server/filestorage"
 	"time"
 )
@@ -18,14 +19,14 @@ func (c *GetFileAction) GetName() string {
 }
 
 func (c *GetFileAction) Run(arg interface{}) (interface{}, error) {
-	p := arg.(*core.CallParams)
+	p := arg.(*entities.CallParams)
 	key, err := validation.CheckNotEmptyStr("key", p.GetParamStr("key"))
 	if err != nil {
 		return nil, err
 	}
 	lastModifiedTimeStampUTC, err := validation.CheckInt64("lastModifiedTimeStampUTC", p.GetParamStr("lastModifiedTimeStampUTC"))
 	if err != nil {
-		lastModifiedTimeStampUTC, err = validation.CheckInt64("if-modified-since", p.Context().Request().Header.Get("if-modified-since"))
+		lastModifiedTimeStampUTC, err = validation.CheckInt64("if-modified-since", p.Request.(echo.Context).Request().Header.Get("if-modified-since"))
 	}
 	var t time.Time
 	if err == nil {

@@ -1,19 +1,20 @@
 package pipeline
 
 import (
-	"github.com/itskovichanton/core/pkg/core"
 	"github.com/itskovichanton/core/pkg/core/validation"
+	"github.com/itskovichanton/echo-http"
 	"github.com/itskovichanton/goava/pkg/goava/httputils"
 	"github.com/itskovichanton/goava/pkg/goava/utils"
-	"github.com/labstack/echo/v4"
+	"github.com/itskovichanton/server/pkg/server"
+	"github.com/itskovichanton/server/pkg/server/entities"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
-func (c *EntityFromHTTPReaderServiceImpl) ReadCaller(r echo.Context) *core.Caller {
+func (c *EntityFromHTTPReaderServiceImpl) ReadCaller(r echo.Context) *entities.Caller {
 
-	res := core.Caller{
+	res := entities.Caller{
 		IP:       r.RealIP(),
 		Version:  ReadVersion(r.Request()),
 		Type:     ReadCallerType(r.Request()),
@@ -26,21 +27,21 @@ func (c *EntityFromHTTPReaderServiceImpl) ReadCaller(r echo.Context) *core.Calle
 		sessionToken = res.AuthArgs.SessionToken
 	}
 	if len(sessionToken) > 0 {
-		res.Session = &core.Session{
+		res.Session = &entities.Session{
 			Token:   sessionToken,
 			Account: nil,
 		}
 	}
 	if res.AuthArgs != nil {
-		res.Session = &core.Session{
+		res.Session = &entities.Session{
 			Token: res.AuthArgs.SessionToken,
 		}
-		res.Session.Account = &core.Account{
+		res.Session.Account = &entities.Account{
 			Username:     res.AuthArgs.Username,
 			Lang:         res.Language,
 			FullName:     "",
 			SessionToken: res.AuthArgs.SessionToken,
-			Role:         core.RoleUser,
+			Role:         entities.RoleUser,
 			Password:     res.AuthArgs.Password,
 			IP:           res.IP,
 		}
@@ -56,13 +57,13 @@ func ReadCallerType(r *http.Request) string {
 	return t
 }
 
-func ReadAuthArgs(r *http.Request) *core.AuthArgs {
+func ReadAuthArgs(r *http.Request) *entities.AuthArgs {
 	username, password, authOK := r.BasicAuth()
 	if !authOK {
 		return nil
 	}
 
-	return &core.AuthArgs{
+	return &entities.AuthArgs{
 		Username:     username,
 		Password:     password,
 		SessionToken: r.Header.Get("sessionToken"),
@@ -72,14 +73,14 @@ func ReadAuthArgs(r *http.Request) *core.AuthArgs {
 
 type IEntityFromHTTPReaderService interface {
 	ReadLanguage(r echo.Context) string
-	ReadCallParams(r echo.Context) (*core.CallParams, error)
+	ReadCallParams(r echo.Context) (*entities.CallParams, error)
 	GetParameters(r echo.Context) (map[string][]interface{}, error)
-	ReadCaller(r echo.Context) *core.Caller
+	ReadCaller(r echo.Context) *entities.Caller
 }
 
 type EntityFromHTTPReaderServiceImpl struct {
 	IEntityFromHTTPReaderService
-	Config *core.Config
+	Config *server.Config
 }
 
 func (c *EntityFromHTTPReaderServiceImpl) ReadLanguage(r echo.Context) string {
@@ -88,30 +89,30 @@ func (c *EntityFromHTTPReaderServiceImpl) ReadLanguage(r echo.Context) string {
 		lang = r.Request().Header.Get("lang")
 	}
 	if len(lang) == 0 {
-		lang = c.Config.Actions.DefaultLang
+		lang = c.Config.Server.DefaultLang
 	}
 	return lang
 }
 
-func ReadVersion(r *http.Request) *core.Version {
+func ReadVersion(r *http.Request) *entities.Version {
 	vc := r.Header.Get("Caller-Version-Code")
 	if len(vc) == 0 {
 		return nil
 	}
 
 	code, _ := strconv.Atoi(vc)
-	return &core.Version{
+	return &entities.Version{
 		Code: code,
 		Name: r.Header.Get("Caller-Version-Name"),
 	}
 }
 
-func (c *EntityFromHTTPReaderServiceImpl) ReadCallParams(r echo.Context) (*core.CallParams, error) {
+func (c *EntityFromHTTPReaderServiceImpl) ReadCallParams(r echo.Context) (*entities.CallParams, error) {
 	params, err := c.GetParameters(r)
 	if err != nil {
 		return nil, err
 	}
-	return &core.CallParams{
+	return &entities.CallParams{
 		Request:    r,
 		Parameters: params,
 		URL:        httputils.GetUrl(r.Request()),
@@ -179,15 +180,15 @@ func (c *EntityFromHTTPReaderServiceImpl) GetParameters(r echo.Context) (map[str
 	return res, nil
 }
 
-func (c *EntityFromHTTPReaderServiceImpl) ReadSession(r *http.Request) *core.Session {
-	return &core.Session{
+func (c *EntityFromHTTPReaderServiceImpl) ReadSession(r *http.Request) *entities.Session {
+	return &entities.Session{
 		//Token:         "",
 		Account: nil,
 	}
 }
 
-func ReadAccount(p *core.CallParams) *core.Account {
-	a := core.Account{
+func ReadAccount(p *entities.CallParams) *entities.Account {
+	a := entities.Account{
 		Password:     p.GetParamStr("password"),
 		Username:     p.GetParamStr("username"),
 		Role:         p.GetParamStr("role"),

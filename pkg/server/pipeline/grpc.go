@@ -2,17 +2,18 @@ package pipeline
 
 import (
 	"context"
-	"github.com/itskovichanton/core/pkg/core"
 	"github.com/itskovichanton/goava/pkg/goava/httputils"
 	"github.com/itskovichanton/goava/pkg/goava/utils"
+	"github.com/itskovichanton/server/pkg/server"
+	"github.com/itskovichanton/server/pkg/server/entities"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 	"strconv"
 )
 
-func (c *EntityFromGRPCReaderServiceImpl) ReadCaller(md metadata.MD, peerInfo *peer.Peer) *core.Caller {
+func (c *EntityFromGRPCReaderServiceImpl) ReadCaller(md metadata.MD, peerInfo *peer.Peer) *entities.Caller {
 
-	r := &core.Caller{
+	r := &entities.Caller{
 		IP:       peerInfo.Addr.String(),
 		Version:  c.readVersion(md),
 		Type:     c.readCallerType(md),
@@ -21,14 +22,14 @@ func (c *EntityFromGRPCReaderServiceImpl) ReadCaller(md metadata.MD, peerInfo *p
 	}
 
 	if r.AuthArgs != nil {
-		r.Session = &core.Session{
+		r.Session = &entities.Session{
 			Token: r.AuthArgs.SessionToken,
 		}
-		r.Session.Account = &core.Account{
+		r.Session.Account = &entities.Account{
 			Username:     r.AuthArgs.Username,
 			Lang:         r.Language,
 			SessionToken: r.AuthArgs.SessionToken,
-			Role:         core.RoleUser,
+			Role:         entities.RoleUser,
 			Password:     r.AuthArgs.Password,
 			IP:           r.IP,
 		}
@@ -44,7 +45,7 @@ func (c *EntityFromGRPCReaderServiceImpl) readCallerType(r metadata.MD) string {
 	return utils.GetFirstElementStr(t)
 }
 
-func (c *EntityFromGRPCReaderServiceImpl) readAuthArgs(r metadata.MD) *core.AuthArgs {
+func (c *EntityFromGRPCReaderServiceImpl) readAuthArgs(r metadata.MD) *entities.AuthArgs {
 
 	sessionToken := utils.GetFirstElementStr(r.Get("sessiontoken"))
 	username, password, authOK := httputils.ParseBasicAuth(utils.GetFirstElementStr(r.Get("authorization")))
@@ -53,7 +54,7 @@ func (c *EntityFromGRPCReaderServiceImpl) readAuthArgs(r metadata.MD) *core.Auth
 		return nil
 	}
 
-	return &core.AuthArgs{
+	return &entities.AuthArgs{
 		Username:     username,
 		Password:     password,
 		SessionToken: sessionToken,
@@ -62,24 +63,24 @@ func (c *EntityFromGRPCReaderServiceImpl) readAuthArgs(r metadata.MD) *core.Auth
 }
 
 type IEntityFromGRPCReaderService interface {
-	ReadCallParams(r context.Context) (*core.CallParams, error)
+	ReadCallParams(r context.Context) (*entities.CallParams, error)
 }
 
 type EntityFromGRPCReaderServiceImpl struct {
 	IEntityFromGRPCReaderService
 
-	Config *core.Config
+	Config *server.Config
 }
 
 func (c *EntityFromGRPCReaderServiceImpl) readLanguage(r metadata.MD) string {
 	lang := utils.GetFirstElementStr(r.Get("lang"))
 	if len(lang) == 0 {
-		lang = c.Config.Actions.DefaultLang
+		lang = c.Config.Server.DefaultLang
 	}
 	return lang
 }
 
-func (c *EntityFromGRPCReaderServiceImpl) readVersion(r metadata.MD) *core.Version {
+func (c *EntityFromGRPCReaderServiceImpl) readVersion(r metadata.MD) *entities.Version {
 	vc := r.Get("caller-version-code")
 	if len(vc) == 0 || len(vc[0]) == 0 {
 		return nil
@@ -91,18 +92,18 @@ func (c *EntityFromGRPCReaderServiceImpl) readVersion(r metadata.MD) *core.Versi
 	if len(nameFromCtx) != 0 {
 		name = nameFromCtx[0]
 	}
-	return &core.Version{
+	return &entities.Version{
 		Code: code,
 		Name: name,
 	}
 }
 
-func (c *EntityFromGRPCReaderServiceImpl) ReadCallParams(ctx context.Context) (*core.CallParams, error) {
+func (c *EntityFromGRPCReaderServiceImpl) ReadCallParams(ctx context.Context) (*entities.CallParams, error) {
 
 	peerInfo, _ := peer.FromContext(ctx)
 	md, _ := metadata.FromIncomingContext(ctx)
 
-	return &core.CallParams{
+	return &entities.CallParams{
 		Request: ctx,
 		URL:     peerInfo.Addr.String(),
 		Caller:  c.ReadCaller(md, peerInfo),

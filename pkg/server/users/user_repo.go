@@ -1,12 +1,12 @@
 package users
 
 import (
-	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/server/pkg/server/entities"
 )
 
 type IUserRepoService interface {
-	FindByUsername(username string) *core.Account
-	Put(account *core.Account)
+	FindByUsername(username string) *entities.Account
+	Put(account *entities.Account)
 	ContainsByUsername(username string) bool
 	Init()
 }
@@ -14,14 +14,14 @@ type IUserRepoService interface {
 type UserRepoServiceImpl struct {
 	IUserRepoService
 
-	storage map[string]*core.Account
+	storage map[string]*entities.Account
 }
 
 func (c *UserRepoServiceImpl) Init() {
-	c.storage = make(map[string]*core.Account)
+	c.storage = make(map[string]*entities.Account)
 }
 
-func (c *UserRepoServiceImpl) FindByUsername(username string) *core.Account {
+func (c *UserRepoServiceImpl) FindByUsername(username string) *entities.Account {
 	a, ok := c.storage[username]
 	if ok {
 		return a
@@ -29,7 +29,7 @@ func (c *UserRepoServiceImpl) FindByUsername(username string) *core.Account {
 	return nil
 }
 
-func (c *UserRepoServiceImpl) Put(account *core.Account) {
+func (c *UserRepoServiceImpl) Put(account *entities.Account) {
 	c.storage[account.Username] = account
 }
 

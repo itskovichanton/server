@@ -1,13 +1,13 @@
 package pipeline
 
 import (
-	"github.com/itskovichanton/core/pkg/core"
 	"github.com/itskovichanton/core/pkg/core/frmclient"
 	"github.com/itskovichanton/goava/pkg/goava/errs"
+	"github.com/itskovichanton/server/pkg/server/entities"
 )
 
 type ICallerValidatorService interface {
-	Check(a *core.CallParams, name string) error
+	Check(a *entities.CallParams, name string) error
 }
 
 type CallerValidatorServiceImpl struct {
@@ -20,7 +20,7 @@ const (
 	InvalidCallerErrorReasonEmptyVersion = "EMPTY_VERSION"
 )
 
-func (c *CallerValidatorServiceImpl) Check(a *core.CallParams, name string) error {
+func (c *CallerValidatorServiceImpl) Check(a *entities.CallParams, name string) error {
 	err := c.validateVersionNotEmpty(a)
 	if err != nil {
 		return err
@@ -28,7 +28,7 @@ func (c *CallerValidatorServiceImpl) Check(a *core.CallParams, name string) erro
 	return c.validateVersionCode(a)
 }
 
-func (c *CallerValidatorServiceImpl) validateVersionNotEmpty(a *core.CallParams) error {
+func (c *CallerValidatorServiceImpl) validateVersionNotEmpty(a *entities.CallParams) error {
 	if a.Caller.Version == nil {
 		return errs.NewBaseErrorWithReason("Версия клиента не указана", InvalidCallerErrorReasonEmptyVersion)
 	}
@@ -38,11 +38,11 @@ func (c *CallerValidatorServiceImpl) validateVersionNotEmpty(a *core.CallParams)
 type CallerUpdateRequiredError struct {
 	errs.BaseError
 
-	RequiredVersion *core.Version
+	RequiredVersion *entities.Version
 	UpdateUrl       string
 }
 
-func (c *CallerValidatorServiceImpl) validateVersionCode(a *core.CallParams) error {
+func (c *CallerValidatorServiceImpl) validateVersionCode(a *entities.CallParams) error {
 
 	settings := c.ServerSettingsProviderService.GetSettings()
 

@@ -2,17 +2,17 @@ package users
 
 import (
 	"fmt"
-	"github.com/itskovichanton/core/pkg/core"
 	"github.com/itskovichanton/core/pkg/core/validation"
 	"github.com/itskovichanton/goava/pkg/goava/errs"
+	"github.com/itskovichanton/server/pkg/server/entities"
 )
 
 type IAuthService interface {
-	Register(account *core.Account) (*core.Session, error)
-	Login(authArgs *core.AuthArgs) (*core.Session, error)
-	Logout(token string) *core.Session
+	Register(account *entities.Account) (*entities.Session, error)
+	Login(authArgs *entities.AuthArgs) (*entities.Session, error)
+	Logout(token string) *entities.Session
 	LogoutAll()
-	RegisterAdmin() (*core.Session, error)
+	RegisterAdmin() (*entities.Session, error)
 }
 
 const (
@@ -34,11 +34,11 @@ func (c *AuthServiceImpl) LogoutAll() {
 	c.SessionStorageService.Clear()
 }
 
-func (c *AuthServiceImpl) Logout(token string) *core.Session {
+func (c *AuthServiceImpl) Logout(token string) *entities.Session {
 	return c.SessionStorageService.LogoutByToken(token)
 }
 
-func (c *AuthServiceImpl) Login(a *core.AuthArgs) (*core.Session, error) {
+func (c *AuthServiceImpl) Login(a *entities.AuthArgs) (*entities.Session, error) {
 
 	if len(a.SessionToken) > 0 {
 		return c.SessionStorageService.GetSessionByToken(a.SessionToken), nil
@@ -64,7 +64,7 @@ func (c *AuthServiceImpl) Login(a *core.AuthArgs) (*core.Session, error) {
 	return nil, errs.NewBaseErrorWithReason(fmt.Sprintf("Неверный пароль", a.Username), ReasonAuthorizationFailedInvalidPassword)
 }
 
-func (c *AuthServiceImpl) Register(a *core.Account) (*core.Session, error) {
+func (c *AuthServiceImpl) Register(a *entities.Account) (*entities.Session, error) {
 	_, err := validation.CheckNotEmptyStr("username", a.Username)
 	if err != nil {
 		return nil, err
@@ -83,11 +83,11 @@ func (c *AuthServiceImpl) Register(a *core.Account) (*core.Session, error) {
 	return c.SessionStorageService.AssignSession(a), nil
 }
 
-func (c *AuthServiceImpl) RegisterAdmin() (*core.Session, error) {
-	return c.Register(&core.Account{
+func (c *AuthServiceImpl) RegisterAdmin() (*entities.Session, error) {
+	return c.Register(&entities.Account{
 		Username:     "admin",
 		SessionToken: "admin-sessiontoken",
-		Role:         core.RoleAdmin,
+		Role:         entities.RoleAdmin,
 		Password:     "admin",
 	})
 }

@@ -2,12 +2,15 @@ package di
 
 import (
 	"github.com/itskovichanton/core/pkg/core"
+	app2 "github.com/itskovichanton/core/pkg/core/app"
 	"github.com/itskovichanton/core/pkg/core/di"
 	"github.com/itskovichanton/core/pkg/core/logger"
+	"github.com/itskovichanton/echo-http"
+	"github.com/itskovichanton/server/pkg/server"
+	"github.com/itskovichanton/server/pkg/server/app"
 	"github.com/itskovichanton/server/pkg/server/filestorage"
 	"github.com/itskovichanton/server/pkg/server/pipeline"
 	"github.com/itskovichanton/server/pkg/server/users"
-	"github.com/labstack/echo/v4"
 	"go.uber.org/dig"
 )
 
@@ -22,10 +25,8 @@ func (c *DI) InitDI(container *dig.Container) {
 
 func (c *DI) buildContainer(container *dig.Container) *dig.Container {
 
-	container.Provide(c.NewSecurityService)
 	container.Provide(c.NewHttpController)
 	container.Provide(c.NewGrpcController)
-	container.Provide(c.NewCheckSecurityAction)
 	container.Provide(c.NewJsonPresenter)
 	container.Provide(c.NewErrorProviderService)
 	container.Provide(c.NewActionRunner)
@@ -46,8 +47,21 @@ func (c *DI) buildContainer(container *dig.Container) *dig.Container {
 	container.Provide(c.NewCallerValidatorService)
 	container.Provide(c.NewDefaultFilePresenter)
 	container.Provide(c.NewResponsePresenter)
+	container.Provide(c.NewServerConfigService)
+	container.Provide(c.NewStubServerApp)
 
 	return container
+}
+
+func (c *DI) NewStubServerApp(HttpControllerImpl *pipeline.HttpControllerImpl, config *server.Config) app2.IApp {
+	return &app.StubServerApp{
+		Config:         config,
+		HttpController: HttpControllerImpl,
+	}
+}
+
+func (c *DI) NewServerConfigService(config *core.Config) (*server.Config, error) {
+	return (&server.ConfigServiceImpl{Config: config}).LoadConfig()
 }
 
 func (c *DI) NewResponsePresenter() pipeline.IResponsePresenter {
@@ -90,26 +104,13 @@ func (c *DI) NewActionRunner(loggerService logger.ILoggerService, errorHandler c
 	}
 }
 
-func (c *DI) NewSecurityService(config *core.Config, serverSettingsProviderService pipeline.IServerSettingsProviderService) pipeline.ISecurityService {
-	return &pipeline.SecurityServiceImpl{
-		Config:                        config,
-		ServerSettingsProviderService: serverSettingsProviderService,
-	}
-}
-
-func (c *DI) NewCheckSecurityAction(securityService pipeline.ISecurityService) *pipeline.CheckSecurityAction {
-	return &pipeline.CheckSecurityAction{
-		SecurityService: securityService,
-	}
-}
-
-func (c *DI) NewEntityFromHTTPReaderService(config *core.Config) pipeline.IEntityFromHTTPReaderService {
+func (c *DI) NewEntityFromHTTPReaderService(config *server.Config) pipeline.IEntityFromHTTPReaderService {
 	return &pipeline.EntityFromHTTPReaderServiceImpl{
 		Config: config,
 	}
 }
 
-func (c *DI) NewEntityFromGRPCReaderService(config *core.Config) pipeline.IEntityFromGRPCReaderService {
+func (c *DI) NewEntityFromGRPCReaderService(config *server.Config) pipeline.IEntityFromGRPCReaderService {
 	return &pipeline.EntityFromGRPCReaderServiceImpl{
 		Config: config,
 	}
@@ -189,11 +190,10 @@ func (c *DI) NewGetSessionAction() *pipeline.GetSessionAction {
 	return &pipeline.GetSessionAction{}
 }
 
-func (c *DI) NewHttpController(getSessionAction *pipeline.GetSessionAction, responsePresenter pipeline.IResponsePresenter, checkSecurityAction *pipeline.CheckSecurityAction, filePresenter *pipeline.FileResponsePresenterImpl, getFileAction *pipeline.GetFileAction, registerAccountAction *pipeline.RegisterAccountAction, validateCallerAction *pipeline.ValidateCallerAction, getUserAction *pipeline.GetUserAction, config *core.Config, actionRunner pipeline.IActionRunner, entityFromHTTPReaderService pipeline.IEntityFromHTTPReaderService) *pipeline.HttpControllerImpl {
+func (c *DI) NewHttpController(config *server.Config, getSessionAction *pipeline.GetSessionAction, responsePresenter pipeline.IResponsePresenter, filePresenter *pipeline.FileResponsePresenterImpl, getFileAction *pipeline.GetFileAction, registerAccountAction *pipeline.RegisterAccountAction, validateCallerAction *pipeline.ValidateCallerAction, getUserAction *pipeline.GetUserAction, actionRunner pipeline.IActionRunner, entityFromHTTPReaderService pipeline.IEntityFromHTTPReaderService) *pipeline.HttpControllerImpl {
 	return &pipeline.HttpControllerImpl{
 		NopAction:                   &pipeline.NopActionImpl{},
 		GetSessionAction:            getSessionAction,
-		CheckSecurityAction:         checkSecurityAction,
 		GetUserAction:               getUserAction,
 		ValidateCallerAction:        validateCallerAction,
 		RegisterAccountAction:       registerAccountAction,
@@ -207,9 +207,8 @@ func (c *DI) NewHttpController(getSessionAction *pipeline.GetSessionAction, resp
 	}
 }
 
-func (c *DI) NewGrpcController(checkSecurityAction *pipeline.CheckSecurityAction, registerAccountAction *pipeline.RegisterAccountAction, validateCallerAction *pipeline.ValidateCallerAction, getUserAction *pipeline.GetUserAction, config *core.Config, actionRunner pipeline.IActionRunner, entityFromGRPCReaderService pipeline.IEntityFromGRPCReaderService) *pipeline.GrpcControllerImpl {
+func (c *DI) NewGrpcController(registerAccountAction *pipeline.RegisterAccountAction, validateCallerAction *pipeline.ValidateCallerAction, getUserAction *pipeline.GetUserAction, config *server.Config, actionRunner pipeline.IActionRunner, entityFromGRPCReaderService pipeline.IEntityFromGRPCReaderService) *pipeline.GrpcControllerImpl {
 	return &pipeline.GrpcControllerImpl{
-		CheckSecurityAction:         checkSecurityAction,
 		GetUserAction:               getUserAction,
 		ValidateCallerAction:        validateCallerAction,
 		RegisterAccountAction:       registerAccountAction,

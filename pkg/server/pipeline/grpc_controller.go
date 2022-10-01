@@ -3,7 +3,8 @@ package pipeline
 import (
 	"context"
 	"fmt"
-	"github.com/itskovichanton/core/pkg/core"
+	"github.com/itskovichanton/server/pkg/server"
+	"github.com/itskovichanton/server/pkg/server/entities"
 	"google.golang.org/grpc"
 	"net"
 )
@@ -15,13 +16,12 @@ type IGrpcController interface {
 type GrpcControllerImpl struct {
 	IGrpcController
 
-	CheckSecurityAction   *CheckSecurityAction
 	GetUserAction         *GetUserAction
 	ValidateCallerAction  *ValidateCallerAction
 	RegisterAccountAction *RegisterAccountAction
 	GetFileAction         *GetFileAction
 
-	Config                      *core.Config
+	Config                      *server.Config
 	ActionRunner                IActionRunner
 	EntityFromGRPCReaderService IEntityFromGRPCReaderService
 	routerModifiers             []func(s *grpc.Server)
@@ -47,7 +47,7 @@ func (c *GrpcControllerImpl) Start() error {
 		modifier(s)
 	}
 
-	println(fmt.Sprintf("%v grpc server started on port %v", c.Config.App.Name, c.Config.Server.GrpcPort))
+	println(fmt.Sprintf("%v grpc server started on port %v", c.Config.CoreConfig.App.Name, c.Config.Server.GrpcPort))
 	if err := s.Serve(lis); err != nil {
 		return err
 	}
@@ -69,10 +69,10 @@ func (c *GrpcControllerImpl) Run(ctx context.Context, action IAction) *Result {
 	return c.RunByErrorProvider(ctx, action, nil)
 }
 
-func (c *GrpcControllerImpl) RunByActionAndErrorProvider(ctx context.Context, action func(args *core.CallParams) IAction, errorProviderService IErrorProviderService) *Result {
+func (c *GrpcControllerImpl) RunByActionAndErrorProvider(ctx context.Context, action func(args *entities.CallParams) IAction, errorProviderService IErrorProviderService) *Result {
 	return c.ActionRunner.RunByProvider(
 		func(args interface{}) IAction {
-			return action(args.(*core.CallParams))
+			return action(args.(*entities.CallParams))
 		},
 		func() (interface{}, error) {
 			return c.EntityFromGRPCReaderService.ReadCallParams(ctx)
@@ -81,6 +81,6 @@ func (c *GrpcControllerImpl) RunByActionAndErrorProvider(ctx context.Context, ac
 	)
 }
 
-func (c *GrpcControllerImpl) RunByActionProvider(ctx context.Context, action func(args *core.CallParams) IAction) *Result {
+func (c *GrpcControllerImpl) RunByActionProvider(ctx context.Context, action func(args *entities.CallParams) IAction) *Result {
 	return c.RunByActionAndErrorProvider(ctx, action, nil)
 }

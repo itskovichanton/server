@@ -2,30 +2,30 @@ package users
 
 import (
 	"fmt"
-	"github.com/itskovichanton/core/pkg/core"
 	"github.com/itskovichanton/goava/pkg/goava/utils"
+	"github.com/itskovichanton/server/pkg/server/entities"
 	"math/rand"
 )
 
 type ISessionStorageService interface {
 	IsLoggedIn(token string) bool
-	GetSessionByUsername(username string) *core.Session
-	GetSessionByToken(token string) *core.Session
-	LogoutByToken(token string) *core.Session
-	AssignSession(account *core.Account) *core.Session
+	GetSessionByUsername(username string) *entities.Session
+	GetSessionByToken(token string) *entities.Session
+	LogoutByToken(token string) *entities.Session
+	AssignSession(account *entities.Account) *entities.Session
 	GetUsersCount() int
 	Clear()
-	LogoutByUsername(username string) *core.Session
+	LogoutByUsername(username string) *entities.Session
 }
 
 type SessionStorageServiceImpl struct {
 	ISessionStorageService
 
-	tokenToSession  map[string]*core.Session
+	tokenToSession  map[string]*entities.Session
 	usernameToToken map[string]string
 }
 
-func (c *SessionStorageServiceImpl) LogoutByUsername(username string) *core.Session {
+func (c *SessionStorageServiceImpl) LogoutByUsername(username string) *entities.Session {
 	if len(username) > 0 {
 		token, ok := c.usernameToToken[username]
 		if ok {
@@ -39,7 +39,7 @@ func (c *SessionStorageServiceImpl) IsLoggedIn(token string) bool {
 	return c.GetSessionByToken(token) != nil
 }
 
-func (c *SessionStorageServiceImpl) GetSessionByUsername(username string) *core.Session {
+func (c *SessionStorageServiceImpl) GetSessionByUsername(username string) *entities.Session {
 	token, ok := c.usernameToToken[username]
 	if !ok {
 		return nil
@@ -51,7 +51,7 @@ func (c *SessionStorageServiceImpl) GetSessionByUsername(username string) *core.
 	return session
 }
 
-func (c *SessionStorageServiceImpl) GetSessionByToken(token string) *core.Session {
+func (c *SessionStorageServiceImpl) GetSessionByToken(token string) *entities.Session {
 	if len(token) == 0 {
 		return nil
 	}
@@ -63,7 +63,7 @@ func (c *SessionStorageServiceImpl) GetSessionByToken(token string) *core.Sessio
 	return r
 }
 
-func (c *SessionStorageServiceImpl) LogoutByToken(token string) *core.Session {
+func (c *SessionStorageServiceImpl) LogoutByToken(token string) *entities.Session {
 
 	removedSession := c.GetSessionByToken(token)
 	if removedSession != nil {
@@ -79,11 +79,11 @@ func (c *SessionStorageServiceImpl) GetUsersCount() int {
 }
 
 func (c *SessionStorageServiceImpl) Clear() {
-	c.tokenToSession = make(map[string]*core.Session)
+	c.tokenToSession = make(map[string]*entities.Session)
 	c.usernameToToken = make(map[string]string)
 }
 
-func (c *SessionStorageServiceImpl) AssignSession(account *core.Account) *core.Session {
+func (c *SessionStorageServiceImpl) AssignSession(account *entities.Account) *entities.Session {
 
 	c.LogoutByUsername(account.Username)
 	c.LogoutByToken(account.SessionToken)
@@ -95,7 +95,7 @@ func (c *SessionStorageServiceImpl) AssignSession(account *core.Account) *core.S
 	}
 	session, ok := c.tokenToSession[token]
 	if !ok {
-		session = &core.Session{
+		session = &entities.Session{
 			Token:   token,
 			Account: account,
 		}
@@ -106,7 +106,7 @@ func (c *SessionStorageServiceImpl) AssignSession(account *core.Account) *core.S
 
 }
 
-func (c *SessionStorageServiceImpl) calcNewToken(account *core.Account) string {
+func (c *SessionStorageServiceImpl) calcNewToken(account *entities.Account) string {
 
 	if len(account.SessionToken) > 0 {
 		return account.SessionToken
@@ -120,6 +120,6 @@ func (c *SessionStorageServiceImpl) calcNewToken(account *core.Account) string {
 	return r
 }
 
-func (c *SessionStorageServiceImpl) getInitialSessionVariant(account *core.Account) string {
+func (c *SessionStorageServiceImpl) getInitialSessionVariant(account *entities.Account) string {
 	return utils.MD5(fmt.Sprintf("%v:%v:%v", utils.CurrentTimeMillis(), account.Username, rand.Intn(10e6)))
 }

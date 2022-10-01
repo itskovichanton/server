@@ -1,8 +1,6 @@
 package pipeline
 
-import (
-	"github.com/itskovichanton/core/pkg/core"
-)
+import "github.com/itskovichanton/server/pkg/server/entities"
 
 type ValidateCallerAction struct {
 	BaseActionImpl
@@ -15,7 +13,7 @@ func (c *ValidateCallerAction) GetName() string {
 }
 
 func (c *ValidateCallerAction) Run(arg interface{}) (interface{}, error) {
-	p := arg.(*core.CallParams)
+	p := arg.(*entities.CallParams)
 	err := c.CallerValidatorService.Check(p, "")
 	return arg, err
 }

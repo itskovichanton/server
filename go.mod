@@ -4,9 +4,10 @@ go 1.19
 
 require (
 	github.com/asaskevich/EventBus v0.0.0-20200907212545-49d423059eef
-	github.com/itskovichanton/core v0.0.0-20220920141922-b9272cd74f53
-	github.com/itskovichanton/goava v0.0.0-20220920141234-6fa469de4e2d
-	github.com/labstack/echo/v4 v4.9.0
+	github.com/itskovichanton/core v1.0.4
+	github.com/itskovichanton/echo-http v1.0.2
+	github.com/itskovichanton/goava v1.0.6
+	github.com/mitchellh/mapstructure v1.4.2
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/cast v1.5.0
@@ -31,7 +32,6 @@ require (
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
-	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/spf13/afero v1.6.0 // indirect

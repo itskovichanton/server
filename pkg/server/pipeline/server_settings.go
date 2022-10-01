@@ -3,6 +3,7 @@ package pipeline
 import (
 	"github.com/itskovichanton/core/pkg/core"
 	"github.com/itskovichanton/goava/pkg/goava/utils"
+	"github.com/itskovichanton/server/pkg/server/entities"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
@@ -72,7 +73,7 @@ func (c *ServerSettingsProviderServiceImpl) reloadSettings() error {
 }
 
 type GlobalSettings struct {
-	Version      *core.Version
+	Version      *entities.Version
 	UpdateAppUrl string
 }
 
