@@ -2,12 +2,10 @@ package di
 
 import (
 	"github.com/itskovichanton/core/pkg/core"
-	app2 "github.com/itskovichanton/core/pkg/core/app"
 	"github.com/itskovichanton/core/pkg/core/di"
 	"github.com/itskovichanton/core/pkg/core/logger"
 	"github.com/itskovichanton/echo-http"
 	"github.com/itskovichanton/server/pkg/server"
-	"github.com/itskovichanton/server/pkg/server/app"
 	"github.com/itskovichanton/server/pkg/server/filestorage"
 	"github.com/itskovichanton/server/pkg/server/pipeline"
 	"github.com/itskovichanton/server/pkg/server/users"
@@ -48,16 +46,8 @@ func (c *DI) buildContainer(container *dig.Container) *dig.Container {
 	container.Provide(c.NewDefaultFilePresenter)
 	container.Provide(c.NewResponsePresenter)
 	container.Provide(c.NewServerConfigService)
-	container.Provide(c.NewStubServerApp)
 
 	return container
-}
-
-func (c *DI) NewStubServerApp(HttpControllerImpl *pipeline.HttpControllerImpl, config *server.Config) app2.IApp {
-	return &app.StubServerApp{
-		Config:         config,
-		HttpController: HttpControllerImpl,
-	}
 }
 
 func (c *DI) NewServerConfigService(config *core.Config) (*server.Config, error) {
