@@ -6,6 +6,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+// Loads core settings
 type IConfigService interface {
 	LoadConfig() (*Config, error)
 }
